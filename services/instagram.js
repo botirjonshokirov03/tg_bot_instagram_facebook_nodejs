@@ -1,12 +1,15 @@
 const axios = require("axios");
 require("dotenv").config();
 
+const { getAccessToken } = require("./utils/getAccessToken");
+
 async function postToInstagram(postData) {
   const { title, description, images } = postData;
 
   if (!images.length) throw new Error("No images provided for Instagram.");
 
   const caption = `${title}\n\n${description}`;
+  const accessToken = await getAccessToken();
 
   if (images.length === 1) {
     const singleRes = await axios.post(
@@ -16,7 +19,7 @@ async function postToInstagram(postData) {
         params: {
           image_url: images[0],
           caption,
-          access_token: process.env.IG_ACCESS_TOKEN,
+          access_token: accessToken,
         },
       }
     );
@@ -27,7 +30,7 @@ async function postToInstagram(postData) {
       {
         params: {
           creation_id: singleRes.data.id,
-          access_token: process.env.IG_ACCESS_TOKEN,
+          access_token: accessToken,
         },
       }
     );
@@ -42,7 +45,7 @@ async function postToInstagram(postData) {
           params: {
             image_url: img,
             is_carousel_item: true,
-            access_token: process.env.IG_ACCESS_TOKEN,
+            access_token: accessToken,
           },
         }
       );
@@ -57,7 +60,7 @@ async function postToInstagram(postData) {
           media_type: "CAROUSEL",
           children: containerIds.join(","),
           caption,
-          access_token: process.env.IG_ACCESS_TOKEN,
+          access_token: accessToken,
         },
       }
     );
@@ -68,7 +71,7 @@ async function postToInstagram(postData) {
       {
         params: {
           creation_id: carouselRes.data.id,
-          access_token: process.env.IG_ACCESS_TOKEN,
+          access_token: accessToken,
         },
       }
     );
