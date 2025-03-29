@@ -1,7 +1,7 @@
 const axios = require("axios");
 require("dotenv").config();
 
-const { getAccessToken } = require("./utils/getAccessToken");
+const { getAccessToken } = require("./utils/generateFbLongToken");
 
 async function postToFacebook(postData) {
   const accessToken = await getAccessToken();
