@@ -1,6 +1,8 @@
 const dotenv = require("dotenv");
+
 const connectDB = require("./db");
 require("./bot/bot");
+require("./services/utils/scheduler");
 
 dotenv.config();
 
