@@ -1,7 +1,10 @@
 const axios = require("axios");
 require("dotenv").config();
 
+const { getAccessToken } = require("./utils/getAccessToken");
+
 async function postToFacebook(postData) {
+  const accessToken = await getAccessToken();
   const { title, description, images } = postData;
   const attachedMedia = [];
 
@@ -14,7 +17,7 @@ async function postToFacebook(postData) {
           params: {
             url: imgUrl,
             published: false,
-            access_token: process.env.FB_ACCESS_TOKEN,
+            access_token: accessToken,
           },
         }
       );
@@ -22,7 +25,7 @@ async function postToFacebook(postData) {
       attachedMedia.push({ media_fbid: uploadRes.data.id });
     } catch (err) {
       console.error(
-        "❌ Failed to upload image to Facebook:",
+        "Failed to upload image to Facebook:",
         imgUrl,
         err?.response?.data || err.message
       );
@@ -40,7 +43,7 @@ async function postToFacebook(postData) {
       params: {
         message: `${title}\n\n${description}`,
         attached_media: JSON.stringify(attachedMedia),
-        access_token: process.env.FB_ACCESS_TOKEN,
+        access_token: accessToken,
       },
     }
   );
