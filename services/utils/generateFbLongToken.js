@@ -1,5 +1,7 @@
-const FacebookToken = require("../../db/models/FacebookToken");
 const axios = require("axios");
+const moment = require("moment");
+
+const FacebookToken = require("../../db/models/FacebookToken");
 
 async function refreshLongLivedToken(currentToken) {
   const response = await axios.get(
@@ -29,7 +31,7 @@ async function refreshLongLivedToken(currentToken) {
 }
 
 async function getAccessToken() {
-  let record = await FacebookToken.findOne();
+  const record = await FacebookToken.findOne();
 
   if (!record) {
     throw new Error(
@@ -37,16 +39,16 @@ async function getAccessToken() {
     );
   }
 
-  const now = new Date();
-  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const now = moment();
+  const lastRefreshed = moment(record.lastRefreshed);
+  const expiresAt = moment(record.expiresAt);
 
-  if (record.expiresAt < now) {
+  if (expiresAt.isBefore(now)) {
     throw new Error("Token expired. Please manually re-authenticate.");
   }
 
-  const fiveDaysFromNow = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000);
-
-  if (record.lastRefreshed < oneDayAgo && record.expiresAt < fiveDaysFromNow) {
+  // Refresh if 50+ days have passed since last refresh
+  if (now.diff(lastRefreshed, "days") >= 50) {
     return await refreshLongLivedToken(record.token);
   }
 
