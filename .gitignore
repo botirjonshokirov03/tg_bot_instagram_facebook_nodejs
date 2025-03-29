@@ -1,4 +1,6 @@
 .env
 .env.*
 
+fb_token.json
+
 /node_modules

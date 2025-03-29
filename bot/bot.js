@@ -1,4 +1,3 @@
-// bot/bot.js
 const TelegramBot = require("node-telegram-bot-api");
 const dotenv = require("dotenv");
 const createUserIfNotExists = require("../db/saveUser");
@@ -97,7 +96,6 @@ bot.on("message", async (msg) => {
         } else {
           state.step = "confirm";
 
-          // Prepare media group with caption on the first image
           const mediaGroup = state.images.map((img, idx) => {
             const item = {
               type: "photo",
